@@ -5,14 +5,14 @@
 package unionfind
 
 type Sites struct {
-	Id     []int
-	Number int
+	id     []int
+	number int
 }
 
 func Init(n int) *Sites {
 	sites := &Sites{make([]int, n), n}
-	for i := range sites.Id {
-		sites.Id[i] = i
+	for i := range sites.id {
+		sites.id[i] = i
 	}
 	return sites
 }
@@ -25,16 +25,16 @@ func (s *Sites) Union(p, q int) {
 		return
 	}
 
-	for i := range s.Id {
+	for i := range s.id {
 		if s.Find(i) == pId {
-			s.Id[i] = qId
+			s.id[i] = qId
 		}
 	}
-	s.Number = s.Number - 1
+	s.number = s.number - 1
 }
 
 func (s Sites) Find(p int) int {
-	return s.Id[p]
+	return s.id[p]
 }
 
 func (s Sites) Connected(p, q int) bool {
@@ -42,5 +42,5 @@ func (s Sites) Connected(p, q int) bool {
 }
 
 func (s Sites) Count() int {
-	return s.Number
+	return s.number
 }
