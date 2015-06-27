@@ -1,4 +1,4 @@
-package chap1_unionfind
+package quick_find
 
 import (
 	"bufio"
@@ -51,7 +51,7 @@ func TestUnion(t *testing.T) {
 		inputFile string
 		want      *Sites
 	}{
-		{"test_data/tinyUF.txt", &Sites{[]int{1, 1, 1, 8, 8, 1, 1, 1, 8, 8}, 2}},
+		{"../test_data/tinyUF.txt", &Sites{[]int{1, 1, 1, 8, 8, 1, 1, 1, 8, 8}, 2}},
 	}
 
 	for _, c := range cases {

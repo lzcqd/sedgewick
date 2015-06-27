@@ -1,8 +1,8 @@
 /**********************************
 / Sedgewick's algorithm edition 4
-/ Chapter 1 Quick Find
+/ Chapter 1 Quick Union
 *********************************/
-package chap1_unionfind
+package quick_union
 
 type Sites struct {
 	id     []int
@@ -25,16 +25,15 @@ func (s *Sites) Union(p, q int) {
 		return
 	}
 
-	for i := range s.id {
-		if s.Find(i) == pId {
-			s.id[i] = qId
-		}
-	}
+	s.id[pId] = qId
 	s.number = s.number - 1
 }
 
 func (s Sites) Find(p int) int {
-	return s.id[p]
+	for s.id[p] != p {
+		p = s.id[p]
+	}
+	return p
 }
 
 func (s Sites) Connected(p, q int) bool {
