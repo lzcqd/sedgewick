@@ -28,11 +28,11 @@ func (s *Sites) Union(p, q int) {
 	}
 
 	if s.weight[pId] < s.weight[qId] {
-		s.id[qId] = pId
-		s.weight[pId] = pId + 1
-	} else {
 		s.id[pId] = qId
-		s.weight[qId] = qId + 1
+        s.weight[qId] = s.weight[pId] + s.weight[qId]
+	} else {
+		s.id[qId] = pId
+        s.weight[pId] = s.weight[pId] + s.weight[qId]
 	}
 	s.number = s.number - 1
 }
