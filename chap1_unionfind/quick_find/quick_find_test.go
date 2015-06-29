@@ -2,6 +2,7 @@ package quick_find
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"reflect"
 	"strconv"
@@ -55,30 +56,17 @@ func TestUnion(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		file, err := os.Open(c.inputFile)
-		checkErr(t, err)
-		defer file.Close()
-
-		scanner := bufio.NewScanner(file)
-
-		var lines []string
-		for scanner.Scan() {
-			lines = append(lines, scanner.Text())
-		}
-		checkErr(t, scanner.Err())
+		lines := readFile(c.inputFile)
 
 		count, _ := strconv.Atoi(lines[0])
-		lines = lines[1:]
 
 		s := Init(count)
 
-		for _, l := range lines {
-			unionString := strings.Split(l, " ")
-			union := make([]int, len(unionString))
-			for i, v := range unionString {
-				union[i], _ = strconv.Atoi(v)
-			}
-			s.Union(union[0], union[1])
+		lines = lines[1:]
+
+		unions := convertToInput(lines)
+		for _, u := range unions {
+			s.Union(u[0], u[1])
 		}
 
 		if !reflect.DeepEqual(s, c.want) {
@@ -88,10 +76,37 @@ func TestUnion(t *testing.T) {
 	}
 }
 
-func checkErr(t *testing.T, err error) {
+func checkErr(err error) {
 	if err != nil {
-		t.Errorf("Error encountered: %q", err.Error())
+		panic(fmt.Sprintf("Error encountered: %q", err.Error()))
 	}
+}
+
+func convertToInput(input []string) [][]int {
+	r := make([][]int, len(input))
+	for i, l := range input {
+		s := strings.Split(l, " ")
+		union := make([]int, len(s))
+		for j, v := range s {
+			union[j], _ = strconv.Atoi(v)
+		}
+		r[i] = union
+	}
+	return r
+}
+func readFile(filePath string) []string {
+	file, err := os.Open(filePath)
+	checkErr(err)
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	var lines []string
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+	checkErr(scanner.Err())
+	return lines
 }
 
 func TestConnected(t *testing.T) {
@@ -133,5 +148,57 @@ func TestCount(t *testing.T) {
 			t.Errorf("Count returned %d, want %d, sites: %+v", got, c.want, s)
 		}
 	}
+}
 
+func BenchmarkTinyUnion(b *testing.B) {
+	lines := readFile("../test_data/tinyUF.txt")
+	count, _ := strconv.Atoi(lines[0])
+
+	s := Init(count)
+	lines = lines[1:]
+
+	unions := convertToInput(lines)
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		for _, u := range unions {
+			s.Union(u[0], u[1])
+		}
+	}
+}
+
+func BenchmarkMediumUnion(b *testing.B) {
+	lines := readFile("../test_data/mediumUF.txt")
+	count, _ := strconv.Atoi(lines[0])
+
+	s := Init(count)
+	lines = lines[1:]
+
+	unions := convertToInput(lines)
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		for _, u := range unions {
+			s.Union(u[0], u[1])
+		}
+	}
+}
+
+// Run this benchmark with care. Remember to use -timeout flag to make sure it stops
+// On my machine this could not be finished within 5min
+func BenchmarkLargeUnion(b *testing.B) {
+	lines := readFile("../test_data/largeUF.txt")
+	count, _ := strconv.Atoi(lines[0])
+
+	s := Init(count)
+	lines = lines[1:]
+
+	unions := convertToInput(lines)
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		for _, u := range unions {
+			s.Union(u[0], u[1])
+		}
+	}
 }
