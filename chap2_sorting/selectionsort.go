@@ -1,15 +1,20 @@
 // Package selectionsort provides implementation of selection sort
 package selectionsort
 
-func SelectionSort(array []int) []int {
-	for i := 0; i < len(array); i++ {
+type Sortable interface {
+	Len() int
+	Swap(i, j int)
+	Less(i, j int) bool
+}
+
+func SelectionSort(data Sortable) {
+	for i := 0; i < data.Len(); i++ {
 		min := i
-		for j := i + 1; j < len(array); j++ {
-			if array[j] < array[min] {
+		for j := i + 1; j < data.Len(); j++ {
+			if data.Less(j, min) {
 				min = j
 			}
 		}
-		array[i], array[min] = array[min], array[i]
+		data.Swap(i, min)
 	}
-	return array
 }
