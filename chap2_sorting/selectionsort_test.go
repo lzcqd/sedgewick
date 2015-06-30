@@ -2,39 +2,35 @@
 package selectionsort
 
 import (
+	"reflect"
 	"testing"
 )
 
-type ascending []int
+type intslice []int
 
-func (a ascending) Len() int           { return len(a) }
-func (a ascending) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ascending) Less(i, j int) bool { return a[i] < a[j] }
+func (a intslice) Len() int           { return len(a) }
+func (a intslice) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a intslice) Less(i, j int) bool { return a[i] < a[j] }
+
+type stringslice []string
+
+func (s stringslice) Len() int           { return len(s) }
+func (s stringslice) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s stringslice) Less(i, j int) bool { return s[i] < s[j] }
 
 func TestSelectionSort(t *testing.T) {
 	cases := []struct {
-		in, want ascending
+		in, want Sortable
 	}{
-		{ascending([]int{8, 3, 5, 7, 10, 1, 4, 2, 9, 6}), ascending([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})},
+		{intslice([]int{8, 3, 5, 7, 10, 1, 4, 2, 9, 6}), intslice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})},
+		{stringslice([]string{"s", "e", "l", "e", "c", "t", "i", "o", "n", "s", "o", "r", "t"}),
+			stringslice([]string{"c", "e", "e", "i", "l", "n", "o", "o", "r", "s", "s", "t", "t"})},
 	}
 
 	for _, c := range cases {
 		SelectionSort(c.in)
-		if !equal(c.in, c.want) {
+		if !reflect.DeepEqual(c.in, c.want) {
 			t.Errorf("Sorting result: %d, want: %d", c.in, c.want)
 		}
 	}
-}
-
-func equal(a, b ascending) bool {
-	if a.Len() != b.Len() {
-		return false
-	}
-
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
 }
