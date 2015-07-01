@@ -1,13 +1,11 @@
 // Package selectionsort provides implementation of selection sort
 package selectionsort
 
-type Sortable interface {
-	Len() int
-	Swap(i, j int)
-	Less(i, j int) bool
-}
+import (
+	"github.com/lzcqd/sedgewick/chap2_sorting/sortable"
+)
 
-func SelectionSort(data Sortable) {
+func Sort(data sortable.Interface) {
 	for i := 0; i < data.Len(); i++ {
 		min := i
 		for j := i + 1; j < data.Len(); j++ {

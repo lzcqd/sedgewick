@@ -2,6 +2,7 @@
 package selectionsort
 
 import (
+	"github.com/lzcqd/sedgewick/chap2_sorting/sortable"
 	"reflect"
 	"testing"
 )
@@ -18,9 +19,9 @@ func (s stringslice) Len() int           { return len(s) }
 func (s stringslice) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
 func (s stringslice) Less(i, j int) bool { return s[i] < s[j] }
 
-func TestSelectionSort(t *testing.T) {
+func TestSort(t *testing.T) {
 	cases := []struct {
-		in, want Sortable
+		in, want sortable.Interface
 	}{
 		{intslice([]int{8, 3, 5, 7, 10, 1, 4, 2, 9, 6}), intslice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})},
 		{stringslice([]string{"s", "e", "l", "e", "c", "t", "i", "o", "n", "s", "o", "r", "t"}),
@@ -28,7 +29,7 @@ func TestSelectionSort(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		SelectionSort(c.in)
+		Sort(c.in)
 		if !reflect.DeepEqual(c.in, c.want) {
 			t.Errorf("Sorting result: %d, want: %d", c.in, c.want)
 		}
