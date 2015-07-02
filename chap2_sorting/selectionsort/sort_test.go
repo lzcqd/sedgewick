@@ -31,7 +31,7 @@ func TestSort(t *testing.T) {
 	for _, c := range cases {
 		Sort(c.in)
 		if !reflect.DeepEqual(c.in, c.want) {
-			t.Errorf("Sorting result: %d, want: %d", c.in, c.want)
+			t.Errorf("Sorting result: %v, want: %v", c.in, c.want)
 		}
 	}
 }
