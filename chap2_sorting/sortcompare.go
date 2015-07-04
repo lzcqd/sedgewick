@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/lzcqd/sedgewick/chap2_sorting/sortable"
+	"reflect"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -13,14 +15,16 @@ func (a floatslice) Len() int           { return len(a) }
 func (a floatslice) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a floatslice) Less(i, j int) bool { return a[i] < a[j] }
 
-func timesort(sort func(sortable.Interface), to_sort []floatslice, name string, out chan string) {
+func timesort(sort func(sortable.Interface), to_sort []floatslice, out chan string) {
+	defer close(out)
+
 	start := time.Now()
 	for _, s := range to_sort {
 		sort(s)
 	}
 
 	duration := time.Since(start)
-	out <- fmt.Sprintf("%s completed in %v milliseconds", name, duration/time.Millisecond)
+	out <- fmt.Sprintf("%s completed in %v milliseconds", runtime.FuncForPC(reflect.ValueOf(sort).Pointer()).Name(), duration/time.Millisecond)
 }
 
 func merge(cs ...<-chan string) <-chan string {
