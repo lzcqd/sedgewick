@@ -27,7 +27,7 @@ func timesort(sort func(sortable.Interface), to_sort []floatslice, out chan stri
 	out <- fmt.Sprintf("%s completed in %v milliseconds", runtime.FuncForPC(reflect.ValueOf(sort).Pointer()).Name(), duration/time.Millisecond)
 }
 
-func merge(cs ...<-chan string) <-chan string {
+func merge(cs ...chan string) <-chan string {
 	var wg sync.WaitGroup
 	out := make(chan string)
 
@@ -51,4 +51,39 @@ func merge(cs ...<-chan string) <-chan string {
 	return out
 }
 
-//func startsorts
+func startsorts(sorts []func(sortable.Interface), to_sort []floatslice, timeout int) {
+	outs := make([]chan string, len(sorts))
+	for i := range outs {
+		outs[i] = make(chan string)
+	}
+
+	out := merge(outs...)
+	done := make(chan bool)
+	go manageOutput(out, timeout, done)
+
+	for i, s := range sorts {
+		go timesort(s, to_sort, outs[i])
+	}
+
+	<-done
+}
+
+func manageOutput(out <-chan string, timeout int, done chan bool) {
+	defer func() {
+		done <- true
+	}()
+
+	quit := time.Tick(time.Duration(timeout) * time.Second)
+
+	for {
+		select {
+		case s, ok := <-out:
+			fmt.Println(s)
+			if !ok {
+				break
+			}
+		case <-quit:
+			break
+		}
+	}
+}
