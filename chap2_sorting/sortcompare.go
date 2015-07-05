@@ -2,7 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/lzcqd/sedgewick/chap2_sorting/insertionsort"
+	"github.com/lzcqd/sedgewick/chap2_sorting/selectionsort"
+	"github.com/lzcqd/sedgewick/chap2_sorting/shellsort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/sortable"
+	"math/rand"
 	"reflect"
 	"runtime"
 	"sync"
@@ -83,7 +87,34 @@ func manageOutput(out <-chan string, timeout int, done chan bool) {
 				break
 			}
 		case <-quit:
+			fmt.Println("Time out.")
 			break
 		}
 	}
+}
+
+func getSortFunc(in string) func(sortable.Interface) {
+	switch in {
+	case "selectionsort":
+		return selectionsort.Sort
+	case "insertionsort":
+		return insertionsort.Sort
+	case "shellsort":
+		return shellsort.Sort
+	default:
+		return nil
+	}
+}
+
+func generateSortArray(arrayCount, elementCount int) []floatslice {
+	ret := make([]floatslice, arrayCount)
+	for i := range ret {
+		array := make([]float64, elementCount)
+		rand.Seed(int64(time.Now().Unix()))
+		for j := range array {
+			array[j] = rand.Float64()
+		}
+		ret[i] = array
+	}
+	return ret
 }
