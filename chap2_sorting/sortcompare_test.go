@@ -18,6 +18,9 @@ func TestGenerateSortArray(t *testing.T) {
 			t.Errorf("Array length not expected. Got %d, want %d", len(got), c.arrayCount)
 		}
 		for _, s := range got {
+			if len(s) != c.elementCount {
+				t.Errorf("Element length of %dth entry no expected. Got %d, want %d", len(s), c.elementCount)
+			}
 			for i := range s {
 				t.Logf("%v\n", s[i])
 			}
