@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"flag"
 	"fmt"
 	"github.com/lzcqd/sedgewick/chap2_sorting/insertionsort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/selectionsort"
@@ -9,6 +11,7 @@ import (
 	"math/rand"
 	"reflect"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 )
@@ -28,7 +31,7 @@ func timesort(sort func(sortable.Interface), to_sort []floatslice, out chan stri
 	}
 
 	duration := time.Since(start)
-	out <- fmt.Sprintf("%s completed in %v milliseconds", runtime.FuncForPC(reflect.ValueOf(sort).Pointer()).Name(), duration/time.Millisecond)
+	out <- fmt.Sprintf("%s completed in %v", runtime.FuncForPC(reflect.ValueOf(sort).Pointer()).Name(), duration)
 }
 
 func merge(cs ...chan string) <-chan string {
@@ -68,7 +71,7 @@ func startsorts(sorts []func(sortable.Interface), to_sort []floatslice, timeout 
 	for i, s := range sorts {
 		go timesort(s, to_sort, outs[i])
 	}
-
+	fmt.Println("sorting...")
 	<-done
 }
 
@@ -84,25 +87,25 @@ func manageOutput(out <-chan string, timeout int, done chan bool) {
 		case s, ok := <-out:
 			fmt.Println(s)
 			if !ok {
-				break
+				return
 			}
 		case <-quit:
 			fmt.Println("Time out.")
-			break
+			return
 		}
 	}
 }
 
-func getSortFunc(in string) func(sortable.Interface) {
+func getSortFunc(in string) (func(sortable.Interface), error) {
 	switch in {
 	case "selectionsort":
-		return selectionsort.Sort
+		return selectionsort.Sort, nil
 	case "insertionsort":
-		return insertionsort.Sort
+		return insertionsort.Sort, nil
 	case "shellsort":
-		return shellsort.Sort
+		return shellsort.Sort, nil
 	default:
-		return nil
+		return nil, errors.New("fail to parse sort function")
 	}
 }
 
@@ -117,4 +120,30 @@ func generateSortArray(arrayCount, elementCount int) []floatslice {
 		ret[i] = array
 	}
 	return ret
+}
+
+func main() {
+	sortFuncs := flag.String("sorts", "", "Sorting functions to compare, comma separated")
+	arrayCount := flag.Int("array", 1, "Number of arrays to sort, default 1")
+	elementCount := flag.Int("element", 1000, "Number of random entries for each array, default 1000")
+	timeout := flag.Int("timeout", 60, "Maximum time to run in seconds, default 60s")
+	flag.Parse()
+
+	funcs := strings.Split(*sortFuncs, ",")
+	for i, f := range funcs {
+		funcs[i] = strings.TrimSpace(f)
+	}
+
+	var sorts []func(sortable.Interface)
+
+	for _, f := range funcs {
+		s, err := getSortFunc(f)
+		if err != nil {
+			panic(fmt.Sprintf("Not recognised sort function: %s\n", s))
+		}
+		sorts = append(sorts, s)
+	}
+
+	sortArray := generateSortArray(*arrayCount, *elementCount)
+	startsorts(sorts, sortArray, *timeout)
 }
