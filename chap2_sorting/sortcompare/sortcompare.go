@@ -18,9 +18,14 @@ import (
 
 type floatslice []float64
 
-func (a floatslice) Len() int           { return len(a) }
-func (a floatslice) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a floatslice) Less(i, j int) bool { return a[i] < a[j] }
+func (a floatslice) Len() int              { return len(a) }
+func (a floatslice) Swap(i, j int)         { a[i], a[j] = a[j], a[i] }
+func (a floatslice) Less(i, j int) bool    { return a[i] < a[j] }
+func (a floatslice) Get(i int) interface{} { return a[i] }
+func (a floatslice) Set(i int, val interface{}) {
+	v := reflect.ValueOf(val)
+	a[i] = v.Float()
+}
 
 func timesort(sort func(sortable.Interface), to_sort []floatslice, out chan string) {
 	defer close(out)
@@ -69,7 +74,13 @@ func startsorts(sorts []func(sortable.Interface), to_sort []floatslice, timeout 
 	go manageOutput(out, timeout, done)
 
 	for i, s := range sorts {
-		go timesort(s, to_sort, outs[i])
+		new_sort := make([]floatslice, len(to_sort))
+		for j := range new_sort {
+			var fs []float64
+			fs = append(fs, to_sort[j]...)
+			new_sort[j] = fs
+		}
+		go timesort(s, new_sort, outs[i])
 	}
 	fmt.Println("sorting...")
 	<-done

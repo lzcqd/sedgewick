@@ -9,15 +9,19 @@ import (
 
 type intslice []int
 
-func (a intslice) Len() int           { return len(a) }
-func (a intslice) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a intslice) Less(i, j int) bool { return a[i] < a[j] }
+func (a intslice) Len() int                   { return len(a) }
+func (a intslice) Swap(i, j int)              { a[i], a[j] = a[j], a[i] }
+func (a intslice) Less(i, j int) bool         { return a[i] < a[j] }
+func (a intslice) Get(i int) interface{}      { return nil }
+func (a intslice) Set(i int, val interface{}) {}
 
 type stringslice []string
 
-func (s stringslice) Len() int           { return len(s) }
-func (s stringslice) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s stringslice) Less(i, j int) bool { return s[i] < s[j] }
+func (s stringslice) Len() int                   { return len(s) }
+func (s stringslice) Swap(i, j int)              { s[i], s[j] = s[j], s[i] }
+func (s stringslice) Less(i, j int) bool         { return s[i] < s[j] }
+func (s stringslice) Get(i int) interface{}      { return nil }
+func (s stringslice) Set(i int, val interface{}) {}
 
 func TestSort(t *testing.T) {
 	cases := []struct {
