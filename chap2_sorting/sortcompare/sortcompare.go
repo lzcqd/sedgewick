@@ -16,18 +16,7 @@ import (
 	"time"
 )
 
-type floatslice []float64
-
-func (a floatslice) Len() int              { return len(a) }
-func (a floatslice) Swap(i, j int)         { a[i], a[j] = a[j], a[i] }
-func (a floatslice) Less(i, j int) bool    { return a[i] < a[j] }
-func (a floatslice) Get(i int) interface{} { return a[i] }
-func (a floatslice) Set(i int, val interface{}) {
-	v := reflect.ValueOf(val)
-	a[i] = v.Float()
-}
-
-func timesort(sort func(sortable.Interface), to_sort []floatslice, out chan string) {
+func timesort(sort func(sortable.Interface), to_sort []sortable.Floatslice, out chan string) {
 	defer close(out)
 
 	start := time.Now()
@@ -63,7 +52,7 @@ func merge(cs ...chan string) <-chan string {
 	return out
 }
 
-func startsorts(sorts []func(sortable.Interface), to_sort []floatslice, timeout int) {
+func startsorts(sorts []func(sortable.Interface), to_sort []sortable.Floatslice, timeout int) {
 	outs := make([]chan string, len(sorts))
 	for i := range outs {
 		outs[i] = make(chan string)
@@ -74,7 +63,7 @@ func startsorts(sorts []func(sortable.Interface), to_sort []floatslice, timeout 
 	go manageOutput(out, timeout, done)
 
 	for i, s := range sorts {
-		new_sort := make([]floatslice, len(to_sort))
+		new_sort := make([]sortable.Floatslice, len(to_sort))
 		for j := range new_sort {
 			var fs []float64
 			fs = append(fs, to_sort[j]...)
@@ -120,8 +109,8 @@ func getSortFunc(in string) (func(sortable.Interface), error) {
 	}
 }
 
-func generateSortArray(arrayCount, elementCount int) []floatslice {
-	ret := make([]floatslice, arrayCount)
+func generateSortArray(arrayCount, elementCount int) []sortable.Floatslice {
+	ret := make([]sortable.Floatslice, arrayCount)
 	for i := range ret {
 		array := make([]float64, elementCount)
 		rand.Seed(int64(time.Now().Unix()))
