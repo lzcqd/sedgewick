@@ -57,3 +57,9 @@ func (a Floatslice) Add(val interface{}) {
 	v := reflect.ValueOf(val)
 	a = append(a, v.Float())
 }
+
+func Copy(in Interface) reflect.Value {
+	v := reflect.MakeSlice(reflect.TypeOf(in), in.Len(), in.Len())
+	v = reflect.Append(v, reflect.ValueOf(in))
+	return v
+}
