@@ -2,6 +2,7 @@ package mergesort
 
 import (
 	"github.com/lzcqd/sedgewick/chap2_sorting/sortable"
+	"math"
 )
 
 func Sort(data sortable.Interface) {
@@ -9,7 +10,12 @@ func Sort(data sortable.Interface) {
 	mergeSort(data, aux, 0, data.Len()-1)
 }
 
-func mergeSort(data sortable.Interface, aux sortable.Interface, start int, end int) {
+func SortBU(data sortable.Interface) {
+	aux := data.AllocateNew()
+	mergeSortBU(data, aux, 0, data.Len()-1)
+}
+
+func mergeSort(data, aux sortable.Interface, start, end int) {
 	if start >= end {
 		return
 	}
@@ -19,7 +25,15 @@ func mergeSort(data sortable.Interface, aux sortable.Interface, start int, end i
 	merge(data, aux, start, mid, end)
 }
 
-func merge(data sortable.Interface, aux sortable.Interface, start int, mid int, end int) {
+func mergeSortBU(data, aux sortable.Interface, start, end int) {
+	for step := 1; step <= end; step = step * 2 {
+		for i := 0; i <= end-step; i = i + step*2 {
+			merge(data, aux, i, i+step-1, int(math.Min(float64(i+step*2-1), float64(end))))
+		}
+	}
+}
+
+func merge(data, aux sortable.Interface, start, mid, end int) {
 	i, j := start, mid+1
 	for k := start; k <= end; k++ {
 		aux.Set(k, data.Get(k))
