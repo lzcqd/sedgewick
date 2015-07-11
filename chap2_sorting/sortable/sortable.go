@@ -10,7 +10,7 @@ type Interface interface {
 	Less(i, j int) bool
 	Get(i int) interface{}
 	Set(i int, val interface{})
-	Add(val interface{})
+	AllocateNew() Interface
 }
 
 type Intslice []int
@@ -23,9 +23,9 @@ func (a Intslice) Set(i int, val interface{}) {
 	v := reflect.ValueOf(val)
 	a[i] = int(v.Int())
 }
-func (a Intslice) Add(val interface{}) {
-	v := reflect.ValueOf(val)
-	a = append(a, int(v.Int()))
+func (a Intslice) AllocateNew() Interface {
+	r := make([]int, a.Len())
+	return Intslice(r)
 }
 
 type Stringslice []string
@@ -38,9 +38,9 @@ func (s Stringslice) Set(i int, val interface{}) {
 	v := reflect.ValueOf(val)
 	s[i] = v.String()
 }
-func (s Stringslice) Add(val interface{}) {
-	v := reflect.ValueOf(val)
-	s = append(s, v.String())
+func (s Stringslice) AllocateNew() Interface {
+	r := make([]string, s.Len())
+	return Stringslice(r)
 }
 
 type Floatslice []float64
@@ -53,13 +53,7 @@ func (a Floatslice) Set(i int, val interface{}) {
 	v := reflect.ValueOf(val)
 	a[i] = v.Float()
 }
-func (a Floatslice) Add(val interface{}) {
-	v := reflect.ValueOf(val)
-	a = append(a, v.Float())
-}
-
-func Copy(in Interface) reflect.Value {
-	v := reflect.MakeSlice(reflect.TypeOf(in), in.Len(), in.Len())
-	v = reflect.Append(v, reflect.ValueOf(in))
-	return v
+func (a Floatslice) AllocateNew() Interface {
+	r := make([]float64, a.Len())
+	return Floatslice(r)
 }

@@ -12,7 +12,7 @@ func TestSort(t *testing.T) {
 	}{
 		{sortable.Intslice([]int{8, 3, 5, 7, 10, 1, 4, 2, 9, 6}), sortable.Intslice([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10})},
 		{sortable.Stringslice([]string{"m", "e", "r", "g", "e", "s", "o", "r", "t"}),
-			sortable.Stringslice([]string{"e", "e", "g", "m", "r", "r", "s", "s", "t"})},
+			sortable.Stringslice([]string{"e", "e", "g", "m", "o", "r", "r", "s", "t"})},
 	}
 
 	for _, c := range cases {
