@@ -107,6 +107,8 @@ func getSortFunc(in string) (func(sortable.Interface), error) {
 		return shellsort.Sort, nil
 	case "mergesort":
 		return mergesort.Sort, nil
+	case "mergesortBU":
+		return mergesort.SortBU, nil
 	default:
 		return nil, errors.New("fail to parse sort function")
 	}
