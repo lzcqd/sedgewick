@@ -118,7 +118,7 @@ func generateSortArray(arrayCount, elementCount int) []sortable.Floatslice {
 	ret := make([]sortable.Floatslice, arrayCount)
 	for i := range ret {
 		array := make([]float64, elementCount)
-		rand.Seed(int64(time.Now().Unix()))
+		rand.Seed(int64(time.Now().UnixNano()))
 		for j := range array {
 			array[j] = rand.Float64()
 		}

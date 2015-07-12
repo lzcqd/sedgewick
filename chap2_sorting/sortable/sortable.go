@@ -1,7 +1,9 @@
 package sortable
 
 import (
+	"math/rand"
 	"reflect"
+	"time"
 )
 
 type Interface interface {
@@ -11,6 +13,15 @@ type Interface interface {
 	Get(i int) interface{}
 	Set(i int, val interface{})
 	AllocateNew() Interface
+	RandomShuffle()
+}
+
+func randomShuffle(data Interface) {
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < data.Len(); i++ {
+		j := rand.Intn(data.Len())
+		data.Swap(i, j)
+	}
 }
 
 type Intslice []int
@@ -27,6 +38,9 @@ func (a Intslice) AllocateNew() Interface {
 	r := make([]int, a.Len())
 	return Intslice(r)
 }
+func (a Intslice) RandomShuffle() {
+	randomShuffle(a)
+}
 
 type Stringslice []string
 
@@ -42,6 +56,9 @@ func (s Stringslice) AllocateNew() Interface {
 	r := make([]string, s.Len())
 	return Stringslice(r)
 }
+func (s Stringslice) RandomShuffle() {
+	randomShuffle(s)
+}
 
 type Floatslice []float64
 
@@ -56,4 +73,7 @@ func (a Floatslice) Set(i int, val interface{}) {
 func (a Floatslice) AllocateNew() Interface {
 	r := make([]float64, a.Len())
 	return Floatslice(r)
+}
+func (a Floatslice) RandomShuffle() {
+	randomShuffle(a)
 }
