@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/lzcqd/sedgewick/chap2_sorting/insertionsort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/mergesort"
+	"github.com/lzcqd/sedgewick/chap2_sorting/quicksort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/selectionsort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/shellsort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/sortable"
@@ -109,6 +110,8 @@ func getSortFunc(in string) (func(sortable.Interface), error) {
 		return mergesort.Sort, nil
 	case "mergesortBU":
 		return mergesort.SortBU, nil
+	case "quicksort":
+		return quicksort.Sort, nil
 	default:
 		return nil, errors.New("fail to parse sort function")
 	}
