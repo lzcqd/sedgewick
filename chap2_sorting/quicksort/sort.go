@@ -5,7 +5,7 @@ import (
 )
 
 func Sort(data sortable.Interface) {
-	data.RandomShuffle()
+	sortable.RandomShuffle(data)
 	quickSort(data, 0, data.Len()-1)
 }
 
