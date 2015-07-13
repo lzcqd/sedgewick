@@ -112,6 +112,8 @@ func getSortFunc(in string) (func(sortable.Interface), error) {
 		return mergesort.SortBU, nil
 	case "quicksort":
 		return quicksort.Sort, nil
+	case "quicksort3way":
+		return quicksort.Sort3Way, nil
 	default:
 		return nil, errors.New("fail to parse sort function")
 	}
