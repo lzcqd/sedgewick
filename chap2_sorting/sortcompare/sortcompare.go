@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/lzcqd/sedgewick/chap2_sorting/heapsort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/insertionsort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/mergesort"
 	"github.com/lzcqd/sedgewick/chap2_sorting/quicksort"
@@ -114,6 +115,8 @@ func getSortFunc(in string) (func(sortable.Interface), error) {
 		return quicksort.Sort, nil
 	case "quicksort3way":
 		return quicksort.Sort3Way, nil
+	case "heapsort":
+		return heapsort.Sort, nil
 	default:
 		return nil, errors.New("fail to parse sort function")
 	}
