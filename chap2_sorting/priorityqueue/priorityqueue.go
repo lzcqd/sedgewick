@@ -5,7 +5,7 @@ import (
 )
 
 type PriorityQueue interface {
-	Insert(key interface{})
+	Insert(key interface{}) PriorityQueue
 	DelMax() interface{}
 }
 
@@ -29,12 +29,13 @@ func (i myint) compare(val interface{}) int {
 	}
 }
 
-func (i IntPriorityQueue) Insert(key interface{}) {
+func (i IntPriorityQueue) Insert(key interface{}) PriorityQueue {
 	v := reflect.ValueOf(key)
 	k := myint(int(v.Int()))
 
 	i = append(i, k)
 	swim(i.toComparable(), len(i)-1)
+	return i
 }
 
 func (i IntPriorityQueue) DelMax() interface{} {
