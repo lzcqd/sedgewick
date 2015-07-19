@@ -1,7 +1,6 @@
 package priorityqueue
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 )
@@ -21,7 +20,7 @@ func TestIntPriorityQueue(t *testing.T) {
 		i := make(IntPriorityQueue, 0)
 		for _, v := range c.in {
 			i = i.Insert(v).(IntPriorityQueue)
-			fmt.Println(i)
+			t.Log(i)
 		}
 
 		if len(i) != len(c.in) {
@@ -29,7 +28,9 @@ func TestIntPriorityQueue(t *testing.T) {
 		}
 
 		for _, r := range c.maxResult {
-			g := i.DelMax()
+			t.Log(i)
+			g, n := i.DelMax()
+			i = n.(IntPriorityQueue)
 			got := reflect.ValueOf(g).Int()
 			if r.compare(got) != 0 {
 				t.Errorf("DelMax return value unexpected, want: %v, got: %v", r, got)
