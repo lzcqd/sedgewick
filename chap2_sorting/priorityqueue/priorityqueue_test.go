@@ -13,13 +13,13 @@ func TestIntPriorityQueue(t *testing.T) {
 	}{
 		{[]comparable{myint(1), myint(3), myint(4), myint(2), myint(5)},
 			[]comparable{myint(5), myint(4), myint(3)},
-			IntPriorityQueue([]myint{2, 1})},
+			(*IntPriorityQueue)(&[]myint{2, 1})},
 	}
 
 	for _, c := range cases {
 		i := make(IntPriorityQueue, 0)
 		for _, v := range c.in {
-			i = i.Insert(v).(IntPriorityQueue)
+			(&i).Insert(v)
 			t.Log(i)
 		}
 
@@ -29,16 +29,15 @@ func TestIntPriorityQueue(t *testing.T) {
 
 		for _, r := range c.maxResult {
 			t.Log(i)
-			g, n := i.DelMax()
-			i = n.(IntPriorityQueue)
+			g := (&i).DelMax()
 			got := reflect.ValueOf(g).Int()
 			if r.compare(got) != 0 {
 				t.Errorf("DelMax return value unexpected, want: %v, got: %v", r, got)
 			}
 		}
 
-		if !reflect.DeepEqual(i, c.want) {
-			t.Errorf("Final state of queue unexpected, want: %v, got %v", c.want, i)
+		if !reflect.DeepEqual(&i, c.want) {
+			t.Errorf("Final state of queue unexpected, want: %v, got %v", c.want, &i)
 		}
 	}
 }

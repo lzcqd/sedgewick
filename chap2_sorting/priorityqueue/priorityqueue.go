@@ -5,8 +5,8 @@ import (
 )
 
 type PriorityQueue interface {
-	Insert(key interface{}) PriorityQueue
-	DelMax() (interface{}, PriorityQueue)
+	Insert(key interface{})
+	DelMax() interface{}
 }
 
 type comparable interface {
@@ -29,32 +29,31 @@ func (i myint) compare(val interface{}) int {
 	}
 }
 
-func (i IntPriorityQueue) Insert(key interface{}) PriorityQueue {
+func (i *IntPriorityQueue) Insert(key interface{}) {
 	v := reflect.ValueOf(key)
 	k := myint(int(v.Int()))
 
-	i = append(i, k)
-	r := i.toComparable()
-	swim(r, len(i)-1)
+	*i = append(*i, k)
+	r := (*i).toComparable()
+	swim(r, len(*i)-1)
 
-	for j := 0; j < len(i); j++ {
-		i[j] = r[j].(myint)
+	for j := 0; j < len(*i); j++ {
+		(*i)[j] = r[j].(myint)
 	}
-	return i
 }
 
-func (i IntPriorityQueue) DelMax() (interface{}, PriorityQueue) {
-	r := i[0]
-	i[0], i[len(i)-1] = i[len(i)-1], i[0]
-	i = append([]myint(nil), i[:len(i)-1]...)
-	c := i.toComparable()
+func (i *IntPriorityQueue) DelMax() interface{} {
+	r := (*i)[0]
+	(*i)[0], (*i)[len(*i)-1] = (*i)[len(*i)-1], (*i)[0]
+	*i = (*i)[:len(*i)-1]
+	c := (*i).toComparable()
 
-	sink(c, 0, len(i)-1)
+	sink(c, 0, len(*i)-1)
 
-	for j := 0; j < len(i); j++ {
-		i[j] = c[j].(myint)
+	for j := 0; j < len(*i); j++ {
+		(*i)[j] = c[j].(myint)
 	}
-	return r, i
+	return r
 }
 
 func (i IntPriorityQueue) toComparable() []comparable {
