@@ -66,6 +66,59 @@ func (i IntPriorityQueue) toComparable() []comparable {
 	return c
 }
 
+type StringPriorityQueue []mybyte
+
+type mybyte byte
+
+func (b mybyte) compare(val interface{}) int {
+	v := mybyte(reflect.ValueOf(val).Uint())
+	if b < v {
+		return -1
+	} else if b == v {
+		return 0
+	} else {
+		return 1
+	}
+}
+
+func (s *StringPriorityQueue) Insert(val interface{}) {
+	v := mybyte(reflect.ValueOf(val).Uint())
+	*s = append(*s, v)
+
+	c := (*s).toComparable()
+	swim(c, len(c)-1)
+
+	for i := 0; i < len(*s); i++ {
+		(*s)[i] = c[i].(mybyte)
+	}
+}
+
+func (s *StringPriorityQueue) DelMax() interface{} {
+	r := (*s)[0]
+
+	(*s)[0], (*s)[len(*s)-1] = (*s)[len(*s)-1], (*s)[0]
+
+	*s = (*s)[:len(*s)-1]
+
+	c := (*s).toComparable()
+	sink(c, 0, len(*s)-1)
+
+	for i := 0; i < len(*s); i++ {
+		(*s)[i] = c[i].(mybyte)
+	}
+
+	return r
+}
+
+func (s StringPriorityQueue) toComparable() []comparable {
+	c := make([]comparable, len(s))
+
+	for i := 0; i < len(s); i++ {
+		c[i] = s[i]
+	}
+	return c
+}
+
 func swim(array []comparable, curr int) {
 	for curr > 0 && array[curr].compare(array[(curr-1)/2]) > 0 {
 		array[curr], array[(curr-1)/2] = array[(curr-1)/2], array[curr]
