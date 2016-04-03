@@ -5,3 +5,4 @@ type StringToIntST interface {
 	Get(key string) (int, bool)
 	Delete(key string)
 }
+//changed
